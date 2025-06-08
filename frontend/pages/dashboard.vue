@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-      <h2 class="sign-up">Добро пожаловать на сайт</h2>
+      <h2 class="sign-up">Добро пожаловать на skillHub</h2>
       <p class="username">👋 Привет, {{ user?.name || 'Гость' }}</p>
     </div>
   </template>

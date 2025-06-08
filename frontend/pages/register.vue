@@ -3,8 +3,6 @@
     <form @submit.prevent="register">
       <h2 class="sign-up">Sign Up</h2>
       <div class="clear"></div>
-
-      <!-- Уведомление -->
       <div
         v-if="successMessage || errorMessage"
         :class="['notification', errorMessage ? 'error' : 'success']"
@@ -38,6 +36,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useAuth } from '@/stores/useAuth'
 
 const name = ref('')
 const email = ref('')
@@ -47,24 +46,24 @@ const successMessage = ref('')
 const errorMessage = ref('')
 const fieldErrors = ref({})
 
-// Валидация email
+
 function isEmailValid(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return re.test(email)
 }
 
-// Валидация пароля
+
 function isPasswordStrong(password) {
   return password.length >= 6
 }
 
 async function register() {
-  // Очистка
+
   errorMessage.value = ''
   successMessage.value = ''
   fieldErrors.value = {}
 
-  // Простая проверка
+
   if (!name.value || !email.value || !password.value || !password_confirmation.value) {
     errorMessage.value = 'Пожалуйста, заполните все поля.'
     return
@@ -88,24 +87,20 @@ async function register() {
     return
   }
 
-  // Отправка
-  try {
-    await $fetch('http://localhost:8000/api/register', {
-      method: 'POST',
-      body: {
-        name: name.value,
-        email: email.value,
-        password: password.value,
-        password_confirmation: password_confirmation.value
-      },
-      credentials: 'include',
-    })
 
-    successMessage.value = 'Регистрация прошла успешно!'
-    name.value = ''
-    email.value = ''
-    password.value = ''
-    password_confirmation.value = ''
+  try {
+  await useAuth().register({
+    name: name.value,
+    email: email.value,
+    password: password.value,
+    password_confirmation: password_confirmation.value
+  })
+
+  successMessage.value = 'Регистрация прошла успешно!'
+  name.value = ''
+  email.value = ''
+  password.value = ''
+  password_confirmation.value = ''
   } catch (e) {
     if (e.data?.errors) {
       fieldErrors.value = e.data.errors
@@ -114,9 +109,8 @@ async function register() {
     } else {
       errorMessage.value = 'Ошибка при регистрации.'
     }
-  }
+}
 
-  // Очистка сообщений
   setTimeout(() => {
     successMessage.value = ''
     errorMessage.value = ''

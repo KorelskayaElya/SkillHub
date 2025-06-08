@@ -22,6 +22,7 @@ class AuthController extends Controller
             'email' => $fields['email'],
             'password' => bcrypt($fields['password']),
         ]);
+        auth()->login($user);
 
         return response()->json(['user' => $user], 201);
     }
@@ -38,17 +39,27 @@ class AuthController extends Controller
         if (!$user || !Hash::check($fields['password'], $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
+        auth()->login($user);
 
         return response()->json(['message' => 'Logged in'], 200);
     }
 
     public function user(Request $request)
     {
-        return $request->user();
+        \Log::info('COOKIES:', $request->cookies->all());
+        \Log::info('User is:', [$request->user()]);
+
+        if (!$request->user()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        return response()->json($request->user());
     }
+
 
     public function logout(Request $request)
     {
+        auth()->logout();
         return response()->json(['message' => 'Logged out']);
     }
 }
