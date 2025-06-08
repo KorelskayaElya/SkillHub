@@ -5,6 +5,8 @@ type User = {
   email: string
 }
 
+const API = 'http://localhost:8000'
+
 export const useAuth = defineStore('auth', {
   state: () => ({
     user: null as User | null,
@@ -13,8 +15,12 @@ export const useAuth = defineStore('auth', {
   actions: {
     async loadUser() {
       try {
-        const user = await $fetch<User>('http://localhost:8000/api/user', {
+        const user = await $fetch<User>(`${API}/api/user`, {
           credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
         })
         this.user = user
       } catch (error) {
@@ -24,10 +30,23 @@ export const useAuth = defineStore('auth', {
 
     async login(email: string, password: string) {
       try {
-        await $fetch('http://localhost:8000/api/login', {
+        // 🔐 Получаем CSRF-cookie
+        await $fetch(`${API}/sanctum/csrf-cookie`, {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
+        })
+
+        await $fetch(`${API}/api/login`, {
           method: 'POST',
           body: { email, password },
           credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
         })
 
         await this.loadUser()
@@ -44,10 +63,23 @@ export const useAuth = defineStore('auth', {
       password_confirmation: string
     }) {
       try {
-        await $fetch('http://localhost:8000/api/register', {
+        // 🔐 Получаем CSRF-cookie
+        await $fetch(`${API}/sanctum/csrf-cookie`, {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
+        })
+
+        await $fetch(`${API}/api/register`, {
           method: 'POST',
           body: data,
           credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
         })
 
         await this.loadUser()
@@ -58,9 +90,22 @@ export const useAuth = defineStore('auth', {
 
     async logout() {
       try {
-        await $fetch('http://localhost:8000/api/logout', {
+        // 🔐 На всякий случай снова получим csrf-cookie перед logout
+        await $fetch(`${API}/sanctum/csrf-cookie`, {
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
+        })
+
+        await $fetch(`${API}/api/logout`, {
           method: 'POST',
           credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+            'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+          },
         })
       } finally {
         this.user = null

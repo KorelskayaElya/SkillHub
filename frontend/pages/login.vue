@@ -37,6 +37,10 @@ async function login() {
   errorMessage.value = ''
 
   try {
+    await $fetch('http://localhost:8000/sanctum/csrf-cookie', {
+      credentials: 'include'
+    })
+
     await $fetch('http://localhost:8000/api/login', {
       method: 'POST',
       body: {
@@ -44,6 +48,10 @@ async function login() {
         password: password.value.slice(0, 40)
       },
       credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'X-XSRF-TOKEN': decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+      }
     })
 
     await useAuth().loadUser()
