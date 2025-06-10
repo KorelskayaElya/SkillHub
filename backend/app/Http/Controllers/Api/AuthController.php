@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\User;
 
 class AuthController extends Controller
@@ -20,28 +22,26 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
+            'password' => $fields['password'],
         ]);
-        auth()->login($user);
 
         return response()->json(['user' => $user], 201);
     }
 
     public function login(Request $request)
     {
-        $fields = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+        $credentials = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
-        $user = User::where('email', $fields['email'])->first();
-
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!Auth::attempt($credentials)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
-        auth()->login($user);
 
-        return response()->json(['message' => 'Logged in'], 200);
+        $request->session()->regenerate();
+
+        return response()->noContent();
     }
 
     public function user(Request $request)
@@ -56,10 +56,13 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
-
     public function logout(Request $request)
     {
-        auth()->logout();
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return response()->json(['message' => 'Logged out']);
     }
 }
