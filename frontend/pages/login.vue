@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="login">
-      <h2 class="sign-up">Login</h2>
+      <h2 class="sign-up">Вход</h2>
       <div class="clear"></div>
     
       <div v-if="errorMessage" class="notification error">
@@ -16,10 +16,15 @@
       <div class="lock">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
-      <input type="password" v-model="password" placeholder="Password" maxlength="40" />
+      <input type="password" v-model="password" placeholder="Пароль" maxlength="40" />
 
-      <input type="submit" value="Login" class="mt-4" />
+      <input type="submit" value="Войти" class="mt-4" />
     </form>
+    <div class="register-link">
+      <p>Нет аккаунта? 
+        <router-link to="/register">Регистрация</router-link>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -163,4 +168,21 @@ input[type="submit"] {
   width: 100%;
   border-radius: 3px;
 }
+.register-link {
+  margin-top: 15px;
+  text-align: center;
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+.register-link a {
+  color: #e6b333;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
 </style>

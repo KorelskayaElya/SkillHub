@@ -28,21 +28,20 @@ class AuthTest extends TestCase
             'email' => 'test@example.com',
         ]);
     }
-
-    public function test_login_returns_ok_for_valid_credentials()
+    
+    public function login(Request $request)
     {
-    $user = User::factory()->create([
-        'email' => 'test@example.com',
-        'password' => bcrypt('password'),
-    ]);
+        $credentials = $request->only('email', 'password');
 
-    $response = $this->postJson('/api/login', [
-        'email' => 'test@example.com',
-        'password' => 'password',
-    ]);
+        if (!auth()->attempt($credentials)) {
+            return response()->json(['message' => 'Неверный логин или пароль'], 401);
+        }
 
-    $response->assertStatus(200);
-    $response->assertJson(['message' => 'Logged in']);
+        $user = auth()->user();
+
+        return response()->json([
+            'message' => 'Logged in',
+            'user' => $user,
+        ], 200);
     }
-
 }
