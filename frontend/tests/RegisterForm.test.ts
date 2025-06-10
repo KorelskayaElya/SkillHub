@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest'
 describe('RegisterForm', () => {
   it('показывает ошибку, если поля пустые', async () => {
     render(RegisterForm)
-    const submitButton = screen.getByRole('button', { name: /register/i })
+    const submitButton = screen.getByRole('button', { name: /Зарегистрироваться/i })
 
     await fireEvent.click(submitButton)
 
@@ -16,12 +16,12 @@ describe('RegisterForm', () => {
   it('показывает ошибку при невалидном email', async () => {
     render(RegisterForm)
 
-    await fireEvent.update(screen.getByPlaceholderText(/Name/), 'Тест')
+    await fireEvent.update(screen.getByPlaceholderText(/Имя/), 'Тест')
     await fireEvent.update(screen.getByPlaceholderText(/Email/), 'test@')
-    await fireEvent.update(screen.getByPlaceholderText(/Create Password/), '123456')
-    await fireEvent.update(screen.getByPlaceholderText(/Repeat Password/), '123456')
+    await fireEvent.update(screen.getByPlaceholderText(/Введите пароль/), '123456')
+    await fireEvent.update(screen.getByPlaceholderText(/Повторите пароль/), '123456')
 
-    await fireEvent.click(screen.getByRole('button', { name: /register/i }))
+    await fireEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }))
 
     expect(screen.getByText(/Невалидный email/)).toBeInTheDocument()
   })
@@ -29,12 +29,12 @@ describe('RegisterForm', () => {
   it('показывает ошибку при несовпадении паролей', async () => {
     render(RegisterForm)
 
-    await fireEvent.update(screen.getByPlaceholderText(/Name/), 'Имя')
+    await fireEvent.update(screen.getByPlaceholderText(/Имя/), 'Имя')
     await fireEvent.update(screen.getByPlaceholderText(/Email/), 'test@mail.com')
-    await fireEvent.update(screen.getByPlaceholderText(/Create Password/), '123456')
-    await fireEvent.update(screen.getByPlaceholderText(/Repeat Password/), '654321')
+    await fireEvent.update(screen.getByPlaceholderText(/Введите пароль/), '123456')
+    await fireEvent.update(screen.getByPlaceholderText(/Повторите пароль/), '654321')
 
-    await fireEvent.click(screen.getByRole('button', { name: /register/i }))
+    await fireEvent.click(screen.getByRole('button', { name: /Зарегистрироваться/i }))
 
     expect(screen.getByText(/Пароли не совпадают/)).toBeInTheDocument()
   })
@@ -44,10 +44,10 @@ describe('RegisterForm', () => {
 
     const longText = 'a'.repeat(50)
 
-    const nameInput = screen.getByPlaceholderText('Name')
+    const nameInput = screen.getByPlaceholderText('Имя')
     const emailInput = screen.getByPlaceholderText('Email')
-    const passwordInput = screen.getByPlaceholderText('Create Password')
-    const repeatPasswordInput = screen.getByPlaceholderText('Repeat Password')
+    const passwordInput = screen.getByPlaceholderText('Введите пароль')
+    const repeatPasswordInput = screen.getByPlaceholderText('Повторите пароль')
 
     await fireEvent.update(nameInput, longText)
     await fireEvent.update(emailInput, longText)
