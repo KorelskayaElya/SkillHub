@@ -30,7 +30,6 @@ export const useAuth = defineStore('auth', {
 
     async login(email: string, password: string) {
       try {
-        // 🔐 Получаем CSRF-cookie
         await $fetch(`${API}/sanctum/csrf-cookie`, {
           credentials: 'include',
           headers: {
@@ -63,7 +62,6 @@ export const useAuth = defineStore('auth', {
       password_confirmation: string
     }) {
       try {
-        // 🔐 Получаем CSRF-cookie
         await $fetch(`${API}/sanctum/csrf-cookie`, {
           credentials: 'include',
           headers: {
@@ -90,7 +88,6 @@ export const useAuth = defineStore('auth', {
 
     async logout() {
       try {
-        // 🔐 На всякий случай снова получим csrf-cookie перед logout
         await $fetch(`${API}/sanctum/csrf-cookie`, {
           credentials: 'include',
           headers: {

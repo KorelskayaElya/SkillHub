@@ -17,9 +17,9 @@ describe('LoginForm', () => {
     })
 
     await fireEvent.update(screen.getByPlaceholderText(/Email/), 'wrong@mail.com')
-    await fireEvent.update(screen.getByPlaceholderText(/Password/), 'wrongpass')
+    await fireEvent.update(screen.getByPlaceholderText(/Пароль/), 'wrongpass')
 
-    await fireEvent.click(screen.getByRole('button', { name: /login/i }))
+    await fireEvent.click(screen.getByRole('button', { name: /Войти/i }))
 
     await screen.findByText(/Ошибка при входе|Неверный логин/)
   })

@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="register">
-      <h2 class="sign-up">Sign Up</h2>
+      <button type="button" class="dashboard-btn" @click="goDashboard">← На главную</button>
+      <h2 class="sign-up">Регистрация</h2>
       <div class="clear"></div>
       <div
         v-if="successMessage || errorMessage"
@@ -11,25 +12,30 @@
       </div>
 
       <div class="user">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
       </div>
-      <input type="text" :value="name" @input="e => name = e.target.value.slice(0, 40)" placeholder="Name" :class="{ invalid: fieldErrors.name }"/>
+      <input type="text" :value="name" @input="e => name = e.target.value.slice(0, 40)" placeholder="Имя" :class="{ invalid: fieldErrors.name }"/>
       <div class="user">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-at-sign"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-at-sign"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
       </div>
       <input type="text" :value="email" @input="e => email = e.target.value.slice(0, 40)" placeholder="Email" :class="{ invalid: fieldErrors.email }" maxlength="40"/>
 
       <div class="lock">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-key"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
       </div>
-      <input type="password" :value="password" @input="e => password = e.target.value.slice(0, 40)" placeholder="Create Password" :class="{ invalid: fieldErrors.password }" maxlength="40"/>
+      <input type="password" :value="password" @input="e => password = e.target.value.slice(0, 40)" placeholder="Введите пароль" :class="{ invalid: fieldErrors.password }" maxlength="40"/>
 
       <div class="lock">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </div>
-      <input type="password" :value="password_confirmation" @input="e => password_confirmation = e.target.value.slice(0, 40)" placeholder="Repeat Password" :class="{ invalid: fieldErrors.password_confirmation }" maxlength="40"/>
+      <input type="password" :value="password_confirmation" @input="e => password_confirmation = e.target.value.slice(0, 40)" placeholder="Повторите пароль" :class="{ invalid: fieldErrors.password_confirmation }" maxlength="40"/>
 
-      <input type="submit" value="Register" class="mt-4" />
+      <input type="submit" value="Зарегистрироваться" class="mt-4" />
+      <div class="register-link">
+      <p>Уже есть аккаунт?
+      <router-link to="/login">Войти</router-link>
+      </p>
+      </div>
     </form>
   </div>
 </template>
@@ -37,7 +43,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuth } from '@/stores/useAuth'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const name = ref('')
 const email = ref('')
 const password = ref('')
@@ -117,6 +125,9 @@ async function register() {
     fieldErrors.value = {}
   }, 4000)
 }
+function goDashboard() {
+  router.push('/dashboard')
+}
 </script>
 
 <style scoped>
@@ -146,10 +157,14 @@ form {
 }
 
 .sign-up {
-  color: white;
+  color: #2a2f36;
   font-size: 1.3em;
   margin-bottom: 10px;
   text-align: center;
+}
+
+html.dark .sign-up {
+  color: #efefef;
 }
 
 .clear {
@@ -176,6 +191,26 @@ form {
   left: 35px;
 }
 
+html.dark .user svg,
+html.dark .lock svg {
+  color: #efefef;
+}
+.dashboard-btn {
+  background: transparent;
+  border: 1.5px solid #e6b333;
+  color: #e6b333;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dashboard-btn:hover {
+  background: #e6b333;
+  color: #1a1f25;
+}
 
 input {
   width: 100%;
@@ -202,7 +237,7 @@ input.invalid {
 input[type="submit"] {
   background: #e6b333;
   border: none;
-  color: white;
+  color: #efefef;
   text-align: center;
   font-size: 0.8em;
   cursor: pointer;
@@ -212,7 +247,7 @@ input[type="submit"] {
 }
 
 .notification {
-  color: white;
+  color: #efefef;
   padding: 10px;
   border-radius: 3px;
   margin-bottom: 10px;
@@ -223,7 +258,27 @@ input[type="submit"] {
   background-color: #f44336;
 }
 .notification.success {
-  background-color: #4caf50; /* Зелёная */
+  background-color: #4caf50;
+}
+.register-link {
+  margin-top: 15px;
+  text-align: center;
+  color: #2a2f36;
+  font-size: 0.9em;
+}
+
+html.dark .register-link {
+  color: #efefef;
+}
+
+.register-link a {
+  color: #e6b333;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
 }
 
 </style>
