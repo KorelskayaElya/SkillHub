@@ -1,52 +1,41 @@
 <template>
-  <div class="dashboard">
-    <nav class="navbar">
-      <div class="navbar-left">
-        <span class="logo">skillHub</span>
-      </div>
-      <div class="navbar-right">
-        <template v-if="user">
-          <span class="username">👋 {{ user.name }}</span>
-          <button class="logout-btn" @click="logout">Выйти</button>
-          <router-link v-if="user.is_admin" to="/admin/courses" class="nav-link">
-            ➕ Добавить курс
-          </router-link>
-        </template>
-        <template v-else>
-          <router-link to="/login" class="nav-link">Войти</router-link>
-          <router-link to="/register" class="nav-link">Регистрация</router-link>
-        </template>
-      </div>
-    </nav>
-
-    <div class="wrapper">
-      <div class="collections">
-        <router-link to="/courses" class="collection-card">
-          Курсы
-        </router-link>
-        <NuxtLink to="/mycourses" class="collection-card">Мои курсы</NuxtLink>
-      </div>
+  <div class="wrapper">
+    <div class="collections">
+      <NuxtLink to="/courses" class="collection-card">
+        Курсы
+      </NuxtLink>
+      <NuxtLink to="/mycourses" class="collection-card">
+        Мои курсы
+      </NuxtLink>
+    </div>
+    <div class="news-panel">
+      <h2 class="news-title">Новости</h2>
+      <ul class="news-list">
+        <li v-for="course in latestCourses" :key="course.id">
+          Добавлен курс: {{ course.title }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
-
 <script setup>
-import { useAuth } from '@/stores/useAuth'
-import { onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const auth = useAuth()
+const latestCourses = ref([])
 
-const user = computed(() => auth.user)
-const logout = auth.logout
-
-onMounted(() => {
-  if (!auth.user) {
-    auth.loadUser()
+onMounted(async () => {
+  try {
+    latestCourses.value = await $fetch('http://localhost:8000/api/courses', {
+      credentials: 'include',
+    })
+  } catch (error) {
+    console.error(error)
   }
 })
 </script>
 
-<style scoped>
+
+<style>
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,300,500");
 
 *,
@@ -57,75 +46,19 @@ onMounted(() => {
 
 html,
 body {
-  background: #1a1f25;
   font-family: "Roboto", sans-serif;
   margin: 0;
   padding: 0;
 }
 
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #2a2f36;
-  padding: 1rem 2rem;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.logo {
-  color: #fff;
-  font-weight: bold;
-  font-size: 1.5em;
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.nav-link {
-  color: #e6b333;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.nav-link:hover {
-  text-decoration: underline;
-}
-
-.logout-btn {
-  background: transparent;
-  border: 1px solid #e6b333;
-  color: #e6b333;
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s;
-}
-
-.logout-btn:hover {
-  background: #e6b333;
-  color: #1a1f25;
-}
-
 .wrapper {
   flex: 1;
-  padding-top: 80px; /* отступ под navbar */
+  padding-top: 80px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
 }
 
 .collections {
@@ -141,18 +74,66 @@ body {
   height: 160px;
   border: 1px solid #e6b333;
   border-radius: 12px;
-  color: #fff;
-  font-size: 1.6rem;
-  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  background-color: #2a2f36;
-  transition: background-color 0.3s, color 0.3s;
   user-select: none;
+  font-size: 1.6rem;
+  font-weight: 700;
+  transition: background-color 0.3s, color 0.3s;
+  color: #2a2f36;
+  background-color: #efefef;
 }
 
 .collection-card:hover {
   background-color: #e6b333;
+}
+
+html.dark .collection-card {
+  background-color: #2a2f36;
+  color: #efefef;
+}
+
+html.dark .collection-card:hover {
+  background-color: #e6b333;
+}
+
+.main-grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.news-panel {
+  flex: 1;
+  margin-left: 2rem;
+  border: 1px solid #e6b333;
+  border-radius: 12px;
+  padding: 1rem;
+  max-width: 400px;
+  background-color: #efefef;
   color: #1a1f25;
 }
+
+html.dark .news-panel {
+  background-color: #1a1f25;
+  color: #efefef;
+}
+
+.news-title {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #e6b333;
+}
+
+.news-list {
+  list-style: none;
+  padding: 0;
+}
+
+.news-list li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
 </style>

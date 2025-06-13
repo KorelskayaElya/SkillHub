@@ -1,11 +1,12 @@
 <template>
   <div class="wrapper">
-    <div class="back-btn-container">
-      <button class="back-btn" @click="goBack">← Назад</button>
-    </div>
-    <h2 class="sign-up">Добавить курс</h2>
+    
 
     <form @submit.prevent="addCourse">
+      <div class="back-btn-container">
+      <button class="back-btn" @click="goBack">← Назад</button>
+      </div>
+      <h2 class="sign-up">Добавить курс</h2>
       <input
         type="text"
         v-model="title"

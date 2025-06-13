@@ -36,6 +36,7 @@ class CourseController extends Controller
 
         return response()->json(['course' => $course], 201);
     }
+
     public function myCourses(Request $request)
     {
         $user = $request->user();
@@ -44,7 +45,6 @@ class CourseController extends Controller
 
         return response()->json($courses);
     }
-
 
     public function index()
     {

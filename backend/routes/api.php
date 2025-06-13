@@ -13,9 +13,10 @@ Route::middleware(['auth:sanctum'])->get('/user', [AuthController::class, 'user'
 Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
 
 
+Route::get('/courses', [CourseController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/courses', [CourseController::class, 'store']);
-    Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/mycourses', [CourseController::class, 'myCourses']); 
 });
 
