@@ -1,14 +1,12 @@
-module.exports = {
-    content: [
-      './assets/**/*.{vue,js,css}',
-      './components/**/*.{vue,js}',
-      './layouts/**/*.vue',
-      './pages/**/*.vue',
-      './plugins/**/*.{js,ts}',
-      './nuxt.config.{js,ts}',
-    ],
-    variants: {
-      extend: {},
-    },
-    plugins: [],
-  };
+
+// tailwind.config.js
+export default {
+  darkMode: 'class',
+  content: [
+    './components/**/*.{vue,js}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './app.vue'
+  ],
+  plugins: []
+}

@@ -11,6 +11,7 @@
     "test": "vitest --config tsconfig.vitest.json"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "^3.5.2",
     "@pinia/nuxt": "^0.11.0",
     "@vueuse/core": "^13.3.0",
     "nuxt": "^3.17.4",
@@ -19,7 +20,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.8",
+    "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/vue": "^8.1.0",
     "@types/testing-library__jest-dom": "^5.14.9",

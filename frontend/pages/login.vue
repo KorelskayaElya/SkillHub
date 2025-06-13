@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="login">
+      <button class="dashboard-btn" @click="goDashboard">← На главную</button>
       <h2 class="sign-up">Вход</h2>
       <div class="clear"></div>
     
@@ -9,22 +10,23 @@
       </div>
 
       <div class="user">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-at-sign" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-at-sign" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
       </div>
       <input type="text" v-model="email" placeholder="Email" maxlength="40" />
 
       <div class="lock">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <input type="password" v-model="password" placeholder="Пароль" maxlength="40" />
 
       <input type="submit" value="Войти" class="mt-4" />
-    </form>
-    <div class="register-link">
+      <div class="register-link">
       <p>Нет аккаунта? 
         <router-link to="/register">Регистрация</router-link>
       </p>
     </div>
+    </form>
+    
   </div>
 </template>
 
@@ -69,6 +71,9 @@ async function login() {
     }
   }
 }
+function goDashboard() {
+  router.push('/dashboard')
+}
 </script>
 
 <style scoped>
@@ -98,10 +103,13 @@ form {
 }
 
 .sign-up {
-  color: white;
+  color: #2a2f36;
   font-size: 1.3em;
   margin-bottom: 10px;
   text-align: center;
+}
+html.dark .sign-up {
+  color: #efefef;
 }
 
 .clear {
@@ -116,6 +124,7 @@ form {
   margin-top: 10px;
   padding: 7px;
   left: 5px;
+  color: #2a2f36;
 }
 .user::after,
 .lock::after {
@@ -123,13 +132,35 @@ form {
   width: 1px;
   height: 30px;
   position: absolute;
-  background: #22272d;
+  background: #2a2f36;
   top: 0px;
   left: 35px;
 }
 
+html.dark .user svg,
+html.dark .lock svg {
+  color: #efefef; 
+} 
+
+.dashboard-btn {
+  background: transparent;
+  border: 1.5px solid #e6b333;
+  color: #e6b333;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dashboard-btn:hover {
+  background: #e6b333;
+  color: #2a2f36;
+}
+
 .notification {
-  color: white;
+  color: #efefef;
   padding: 10px;
   border-radius: 3px;
   margin-bottom: 10px;
@@ -152,7 +183,7 @@ input {
 input[type="text"],
 input[type="password"] {
   background: transparent;
-  border: 2px solid #22272d;
+  border: 2px solid #2a2f36;
   padding-left: 45px;
   color: #e6b333;
 }
@@ -160,7 +191,7 @@ input[type="password"] {
 input[type="submit"] {
   background: #e6b333;
   border: none;
-  color: white;
+  color: #efefef;
   text-align: center;
   font-size: 0.8em;
   cursor: pointer;
@@ -168,11 +199,16 @@ input[type="submit"] {
   width: 100%;
   border-radius: 3px;
 }
+
 .register-link {
   margin-top: 15px;
   text-align: center;
-  color: #ccc;
+  color: #2a2f36;
   font-size: 0.9em;
+}
+
+html.dark .register-link {
+  color: #efefef;
 }
 
 .register-link a {
