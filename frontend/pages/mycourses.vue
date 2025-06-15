@@ -30,7 +30,7 @@ function goDashboard() {
 
 onMounted(async () => {
   try {
-    courses.value = await $fetch('http://localhost:8000/api/my-courses', {
+    courses.value = await $fetch('http://localhost:8000/api/mycourses', {
       credentials: 'include',
     })
   } catch (error) {

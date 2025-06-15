@@ -17,8 +17,12 @@ Route::get('/courses', [CourseController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/courses', [CourseController::class, 'store']);
-    Route::get('/mycourses', [CourseController::class, 'myCourses']); 
+    Route::patch('/courses/{course}', [CourseController::class, 'update']);
+    Route::get('/courses/{course}', [CourseController::class, 'show']);
+    Route::get('/mycourses', [CourseController::class, 'myCourses']);
+    Route::post('/courses/{id}/buy', [CourseController::class, 'buy']);
+    Route::post('/user/courses', [UserController::class, 'enroll']);
 });
 
-Route::middleware('auth:sanctum')->post('/user/courses', [UserController::class, 'enroll']);
+
 

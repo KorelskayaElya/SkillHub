@@ -1,18 +1,22 @@
 <template>
   <div class="wrapper">
-    
-
-    <form @submit.prevent="addCourse">
-      <div class="back-btn-container">
+    <div class="back-btn-container">
       <button class="back-btn" @click="goBack">← Назад</button>
-      </div>
-      <h2 class="sign-up">Добавить курс</h2>
-      <input
-        type="text"
-        v-model="title"
-        placeholder="Название курса"
-        required
-      />
+    </div>
+
+    <h2 class="sign-up">Редактировать курс</h2>
+
+    <select v-model="selectedCourseId" @change="loadCourse" class="course-select">
+      <option disabled value="">Выберите курс для редактирования</option>
+      <option v-for="course in coursesStore.courses" :key="course.id" :value="course.id">
+        {{ course.title }}
+      </option>
+    </select>
+
+    <form v-if="selectedCourseId" @submit.prevent="updateCourse">
+      <input type="text" v-model="title" placeholder="Название курса" required />
+      <textarea v-model="description" placeholder="Описание курса" required></textarea>
+      <input type="number" v-model="price" placeholder="Стоимость курса (₽)" min="0" required />
 
       <div
         class="drop-zone"
@@ -31,12 +35,7 @@
         />
       </div>
 
-      <input
-        type="submit"
-        value="Добавить курс"
-        class="submit-btn"
-        :disabled="isLoading"
-      />
+      <input type="submit" value="Сохранить изменения" class="submit-btn" :disabled="isLoading" />
     </form>
 
     <div v-if="successMessage" class="notification success">
@@ -46,21 +45,40 @@
     <div v-if="errorMessage" class="notification error">
       {{ errorMessage }}
     </div>
+
+    <div v-if="selectedCourse">
+      <h3>Выбранный курс:</h3>
+      <p>Название: {{ selectedCourse.title }}</p>
+      <p>Цена: {{ selectedCourse.price }}₽</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCourses } from '@/stores/useCourses'
+import { storeToRefs } from 'pinia'
+import api from '@/utils/axios'
 
-const router = useRouter()  
+const router = useRouter()
+const coursesStore = useCourses()
+const { selectedCourse } = storeToRefs(coursesStore)
+
+const selectedCourseId = ref('')
 const title = ref('')
+const description = ref('')
+const price = ref('')
 const image = ref(null)
 const preview = ref('')
 const successMessage = ref('')
 const errorMessage = ref('')
 const isLoading = ref(false)
 const fileInput = ref(null)
+
+onMounted(() => {
+  coursesStore.fetchCourses()
+})
 
 function goBack() {
   router.push('/dashboard')
@@ -95,14 +113,27 @@ function processFile(file) {
   reader.readAsDataURL(file)
 }
 
-async function addCourse() {
+async function loadCourse() {
+  if (!selectedCourseId.value) return
+
+  try {
+    const response = await api.get(`/api/courses/${selectedCourseId.value}`)
+    const course = response.data
+
+    title.value = course.title || ''
+    description.value = course.description || ''
+    price.value = course.price || 0
+    preview.value = course.image_url || ''
+    image.value = null
+  } catch (error) {
+    console.error('ERROR LOADING COURSE:', error)
+    errorMessage.value = 'Ошибка при загрузке курса.'
+  }
+}
+
+async function updateCourse() {
   if (!title.value.trim()) {
     alert('Пожалуйста, введите название курса')
-    return
-  }
-
-  if (!image.value) {
-    alert('Пожалуйста, загрузите изображение')
     return
   }
 
@@ -112,31 +143,28 @@ async function addCourse() {
 
   const formData = new FormData()
   formData.append('title', title.value)
-  formData.append('image', image.value)
+  formData.append('description', description.value || '')
+  formData.append('price', Number(price.value).toString())
+  if (image.value) {
+    formData.append('image', image.value)
+  }
+
+  for (const pair of formData.entries()) {
+    console.log(`${pair[0]}:`, pair[1])
+  }
 
   try {
-    await $fetch('http://localhost:8000/sanctum/csrf-cookie', {
-      credentials: 'include',
-    })
+    await api.get('/sanctum/csrf-cookie')
+    formData.append('_method', 'PATCH')
 
-    const csrfToken = decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)?.[1] ?? '')
+    await api.post(`/api/courses/${selectedCourseId.value}`, formData)
 
-    await $fetch('http://localhost:8000/api/courses', {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-      headers: {
-        'X-XSRF-TOKEN': csrfToken,
-        Accept: 'application/json',
-      },
-    })
+    successMessage.value = 'Курс успешно обновлен!'
+    await coursesStore.fetchCourses()
 
-    successMessage.value = 'Курс успешно добавлен!'
-    title.value = ''
-    image.value = null
-    preview.value = ''
   } catch (e) {
-    errorMessage.value = e?.data?.message || 'Ошибка при добавлении курса.'
+    console.error('UPDATE ERROR:', e)
+    errorMessage.value = e?.response?.data?.message || 'Ошибка при обновлении курса.'
   } finally {
     isLoading.value = false
   }
@@ -144,7 +172,9 @@ async function addCourse() {
 
 </script>
 
+
 <style scoped>
+
 .wrapper {
   max-width: 400px;
   margin: 100px auto;
@@ -159,7 +189,7 @@ async function addCourse() {
   margin-bottom: 1.5rem;
 }
 
-input[type='text'] {
+.course-select {
   width: 100%;
   box-sizing: border-box;
   padding: 0.6rem;
@@ -167,6 +197,23 @@ input[type='text'] {
   border-radius: 8px;
   border: none;
   font-size: 1rem;
+}
+
+input[type='text'],
+textarea,
+input[type='number'] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 100px;
 }
 
 .drop-zone {
@@ -231,6 +278,7 @@ input[type='text'] {
   padding: 10px;
   border-radius: 5px;
 }
+
 .back-btn-container {
   display: flex;
   justify-content: flex-start;
@@ -252,5 +300,4 @@ input[type='text'] {
   background: #e6b333;
   color: #1a1f25;
 }
-
 </style>
