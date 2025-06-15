@@ -13,6 +13,8 @@ class CourseFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(3),
+            'description' => $this->faker->paragraph(),
+            'price' => $this->faker->numberBetween(1000, 10000),
             'image' => '/storage/courses/sample.jpg',
         ];
     }
