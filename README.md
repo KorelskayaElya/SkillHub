@@ -45,7 +45,7 @@
 
 | Панель | Курсы | Модaльный экран курса | Покупка курса | Мои курсы |
 |--------|-------|-----------------------|---------------|-----------|
-| ![](src/dashboard.png) | ![](src/courses.png) | ![](src/modal.png) |![](src/coursesbuy.png) |[](src/mycourses.png)|
+| ![](src/dashboard.png) | ![](src/courses.png) | ![](src/modal.png) |![](src/coursesbuy.png) | ![](src/mycourses.png)|
 
 ### Администрирование
 
