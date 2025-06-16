@@ -272,6 +272,4 @@ input[type='number'] {
 textarea {
   min-height: 100px;
 }
-
-
 </style>

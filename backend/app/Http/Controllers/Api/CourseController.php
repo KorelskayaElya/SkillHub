@@ -138,8 +138,4 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Курс успешно приобретён']);
     }
-
-
-    
-
 }

@@ -27,7 +27,6 @@ function goDashboard() {
   router.push('/dashboard')
 }
 
-
 onMounted(async () => {
   try {
     courses.value = await $fetch('http://localhost:8000/api/mycourses', {

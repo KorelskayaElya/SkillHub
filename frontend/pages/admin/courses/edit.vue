@@ -172,7 +172,6 @@ async function updateCourse() {
 
 </script>
 
-
 <style scoped>
 
 .wrapper {

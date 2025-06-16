@@ -96,7 +96,6 @@ async function buyCourse(course) {
 }
 </script>
 
-
 <style scoped>
 
 .container {
