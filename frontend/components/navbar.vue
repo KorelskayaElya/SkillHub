@@ -8,8 +8,11 @@
     </div>
     <div class="navbar-right">
       <template v-if="user">
-        <router-link v-if="user.is_admin" to="/admin/courses" class="nav-link">
+        <router-link v-if="user.is_admin" to="/admin/courses/add" class="nav-link">
           ➕ Добавить курс
+        </router-link>
+        <router-link v-if="user.is_admin" to="/admin/courses/edit" class="nav-link">
+          ✏️ Редактировать курс
         </router-link>
         <span class="username">👋 {{ user.name }}</span>
         <button class="logout-btn" @click="logout">Выйти</button>
